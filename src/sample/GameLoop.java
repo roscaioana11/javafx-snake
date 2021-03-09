@@ -1,11 +1,11 @@
 package sample;
-
 import javafx.scene.canvas.GraphicsContext;
 
-public class GameLoop implements Runnable{
-    private final Grid grid;
+//Runnable merge in paralel cu Canvas-ul
+public class GameLoop implements Runnable{ //precum controllerul de la API, aici vin toate finalizate
+    public final Grid grid;
     private final GraphicsContext context;
-    private static final int FRAMERATE = 1;
+    private static final int FRAMERATE = 10;
 
     public GameLoop(Grid grid,GraphicsContext context) {
         this.grid = grid;
@@ -16,14 +16,15 @@ public class GameLoop implements Runnable{
     public void run() {
 
         while (true){
-            int status = update();
+            int status = update(); //ofera un status, iar daca da un status de exit, atunci jocul este intrerupt
             if(status == -1){
-                break;
+                grid.reset();
             }
             render();
             try {
-                Thread.sleep((long) (1000 / FRAMERATE));
+                Thread.sleep((long) (1000 / FRAMERATE)); //asigurarea ca jocul functioneaza cu un framerate constant
             } catch (InterruptedException ignore) {
+
             }
             System.out.println("loop ended");
         }
@@ -34,6 +35,6 @@ public class GameLoop implements Runnable{
     }
 
     public int update(){
-        return 0;
+        return grid.update();
     }
 }

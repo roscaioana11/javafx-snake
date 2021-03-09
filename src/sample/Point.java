@@ -1,5 +1,8 @@
 package sample;
 
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+
 public class Point {
     private int x;
     private int y;
@@ -23,6 +26,13 @@ public class Point {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public void render(GraphicsContext context,Color color){
+        context.setFill(color);
+        int rectSize = Play.SCREENWIDTH / Play.COLUMNNUMBER;
+        context.fillRect(x * rectSize, y * rectSize,
+                rectSize, rectSize);
     }
 
 }

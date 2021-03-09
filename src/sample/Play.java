@@ -24,22 +24,47 @@ public class Play extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         primaryStage.setTitle("SNAKE");
-        StackPane root = new StackPane();
-        Canvas canvas = new Canvas(SCREENWIDTH, SCREENHEIGHT);
-        GraphicsContext context = canvas.getGraphicsContext2D();
+        StackPane root = new StackPane(); //creaza un screen pe care apoi poti atasa un canvas
+        Canvas canvas = new Canvas(SCREENWIDTH, SCREENHEIGHT); //creaza o zona unde am control asupra pixelilor
+        GraphicsContext context = canvas.getGraphicsContext2D(); //metoda folosita pt manipulare a pixelilor
         canvas.setFocusTraversable(true);
+        canvas.setOnKeyPressed(e -> {
+            Snake snake = loop.grid.snake;
+
+            //TODO snake shouldn't be able to move the complete opposite of its current direction
+            //TODO pause
+            switch (e.getCode()) {
+                case UP:
+                    snake.direction = "UP";
+                    break;
+                case DOWN:
+                    snake.direction = "DOWN";
+                    break;
+                case LEFT:
+                    snake.direction = "LEFT";
+                    break;
+                case RIGHT:
+                    snake.direction = "RIGHT";
+                    break;
+//                case ENTER:
+//                    if (loop.isPaused()) {
+//                        reset();
+//                        (new Thread(loop)).start();
+//                    }
+            }
+        });
         Random random = new Random();
-        loop = new GameLoop(new Grid(
-                new Snake(
-                        new Point(random.nextInt(COLUMNNUMBER),random.nextInt(COLUMNNUMBER)), "UP"),
-                new Food(new Point(random.nextInt(COLUMNNUMBER),random.nextInt(COLUMNNUMBER)))), context);
+        loop = new GameLoop(new Grid(), context);
+//        loop.grid.snake.snakeBody.add(new Point(
+//                loop.grid.snake.snakeBody.get(0).getX(),
+//                loop.grid.snake.snakeBody.get(0).getY() - 1
+//        ));
         root.getChildren().add(canvas);
         primaryStage.setScene(new Scene(root, SCREENWIDTH, SCREENHEIGHT));
         primaryStage.show();
 
         (new Thread(loop)).start();
     }
-
 
     public static void main(String[] args) {
         launch(args);
