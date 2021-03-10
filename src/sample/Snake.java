@@ -9,11 +9,23 @@ import java.util.List;
 public class Snake {
     public List<Point> snakeBody;
     public String direction;
+    public boolean moved;
 
     public Snake(Point startingPoint, String direction) {
         this.snakeBody = new ArrayList<>();
         this.snakeBody.add(startingPoint);
         this.direction = direction;
+        this.moved = false;
+    }
+
+    public void changeDirection(String newDirection){
+        if(!moved && (newDirection == "UP" && direction != "DOWN") ||
+                (newDirection == "DOWN" && direction != "UP") ||
+                (newDirection == "LEFT" && direction != "RIGHT") ||
+                (newDirection == "RIGHT" && direction != "LEFT")){
+            direction = newDirection;
+            moved = true;
+        }
     }
 
     public void render(GraphicsContext context,Color color){
@@ -23,6 +35,7 @@ public class Snake {
     }
 
     public int update(Food food){
+        moved = false;
         Point lastPosition = new Point(snakeBody.get(0).getX(), snakeBody.get(0).getY());
         if(direction == "UP"){
             snakeBody.get(0).setY(snakeBody.get(0).getY() - 1);
@@ -61,7 +74,6 @@ public class Snake {
             snakeBody.add(lastPosition);
             return 1;
         }
-
         return 0;
     }
 }

@@ -18,7 +18,7 @@ public class Play extends Application {
     public static final int SCREENWIDTH = 800;
     public static final int SCREENHEIGHT = 800;
     public static final int COLUMNNUMBER = 25;
-
+    public static int FRAMERATE = 5;
     private GameLoop loop;
 
     @Override
@@ -30,39 +30,31 @@ public class Play extends Application {
         canvas.setFocusTraversable(true);
         canvas.setOnKeyPressed(e -> {
             Snake snake = loop.grid.snake;
-
-            //TODO snake shouldn't be able to move the complete opposite of its current direction
-            //TODO pause
-            switch (e.getCode()) {
-                case UP:
-                    snake.direction = "UP";
-                    break;
-                case DOWN:
-                    snake.direction = "DOWN";
-                    break;
-                case LEFT:
-                    snake.direction = "LEFT";
-                    break;
-                case RIGHT:
-                    snake.direction = "RIGHT";
-                    break;
-//                case ENTER:
-//                    if (loop.isPaused()) {
-//                        reset();
-//                        (new Thread(loop)).start();
-//                    }
-            }
+                switch (e.getCode()) {
+                    case UP:
+                        snake.changeDirection("UP");
+                        break;
+                    case DOWN:
+                        snake.changeDirection("DOWN");
+                        break;
+                    case LEFT:
+                        snake.changeDirection("LEFT");
+                        break;
+                    case RIGHT:
+                        snake.changeDirection("RIGHT");
+                        break;
+                    case ENTER:
+                        if (loop.pause) {
+                            loop.pause = false;
+                        }else{
+                            loop.pause = true;
+                        }
+                }
         });
-        Random random = new Random();
         loop = new GameLoop(new Grid(), context);
-//        loop.grid.snake.snakeBody.add(new Point(
-//                loop.grid.snake.snakeBody.get(0).getX(),
-//                loop.grid.snake.snakeBody.get(0).getY() - 1
-//        ));
         root.getChildren().add(canvas);
         primaryStage.setScene(new Scene(root, SCREENWIDTH, SCREENHEIGHT));
         primaryStage.show();
-
         (new Thread(loop)).start();
     }
 

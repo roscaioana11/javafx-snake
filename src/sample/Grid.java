@@ -3,6 +3,8 @@ package sample;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static sample.Play.COLUMNNUMBER;
@@ -33,11 +35,33 @@ public class Grid {
     }
 
     public int update(){
-        //TODO change food location to space that isn't occupied by snake
         int status = snake.update(food);
         if(status == 1){
+            if(Play.FRAMERATE < COLUMNNUMBER){
+                Play.FRAMERATE++;
+            }
+            List<Point> unoccupiedPoints = new ArrayList<>();
+            for(int i = 0; i < COLUMNNUMBER; i++){
+                for (int j = 0; j < COLUMNNUMBER; j++){
+                    boolean intersects = false;
+                    for(int k = 0; k < snake.snakeBody.size(); k++){
+                        if((mapGrid[i][j].getX() == snake.snakeBody.get(k).getX() &&
+                        mapGrid[i][j].getY() == snake.snakeBody.get(k).getY())){
+                            intersects = true;
+                        }
+                    }
+                    if(!intersects){
+                        unoccupiedPoints.add(mapGrid[i][j]);
+                    }
+                }
+            }
+            if(unoccupiedPoints.size() == 0){ //conditia de victorie
+                return 1;
+            }
             Random random = new Random();
-            food.changeFoodLocation(random.nextInt(COLUMNNUMBER), random.nextInt(COLUMNNUMBER));
+            int randomPointIndex = random.nextInt(unoccupiedPoints.size());
+            food.changeFoodLocation(unoccupiedPoints.get(randomPointIndex).getX(),
+                    unoccupiedPoints.get(randomPointIndex).getY());
         }else if(status == -1){
             return -1;
         }
@@ -45,8 +69,18 @@ public class Grid {
     }
 
     public void reset(){
+        Play.FRAMERATE = 5;
         Random random = new Random();
-        snake = new Snake(new Point(random.nextInt(COLUMNNUMBER),random.nextInt(COLUMNNUMBER)), "UP");
-        food = new Food(new Point(random.nextInt(COLUMNNUMBER),random.nextInt(COLUMNNUMBER)));
+        int snakeX = random.nextInt(COLUMNNUMBER);
+        int snakeY = random.nextInt(COLUMNNUMBER);
+        int foodX = snakeX;
+        int foodY = snakeY;
+
+        while(snakeX == foodX && snakeY == foodY){
+            foodX = random.nextInt(COLUMNNUMBER);
+            foodY = random.nextInt(COLUMNNUMBER);
+        }
+        snake = new Snake(new Point(snakeX, snakeY), "UP");
+        food = new Food(new Point(foodX, foodY));
     }
 }
